@@ -1,0 +1,29 @@
+{
+  "name": "Autofocus Search Bar",
+  "version": "0.1.0",
+  "manifest_version": 2,
+  "description": "Automatically focuses the main search bar of any website.",
+  "icons": {
+    "128": "Icons/icons8-google-web-search-128.png"
+  },
+  "permissions": ["tabs"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["inject.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "commands": {
+    "focus-search-bar": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "Focus the main search bar"
+    }
+  },
+  "content_security_policy": "script-src 'self'; object-src 'self'"
+}

@@ -4,7 +4,9 @@
   "manifest_version": 2,
   "description": "Automatically focuses the main search bar of any website.",
   "icons": {
-    "128": "Icons/icons8-google-web-search-128.png"
+    "16": "icons/icons8-google-web-search-16.png",
+    "48": "icons/icons8-google-web-search-48.png",
+    "128": "icons/icons8-google-web-search-128.png"
   },
   "permissions": ["tabs"],
   "content_scripts": [
@@ -13,6 +15,14 @@
       "js": ["inject.js"]
     }
   ],
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/icons8-google-web-search-16.png",
+      "48": "icons/icons8-google-web-search-48.png",
+      "128": "icons/icons8-google-web-search-128.png"
+    },
+    "default_popup": "popup.html"
+  },
   "background": {
     "scripts": ["background.js"],
     "persistent": false
@@ -25,5 +35,6 @@
       "description": "Focus the main search bar"
     }
   },
-  "content_security_policy": "script-src 'self'; object-src 'self'"
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "web_accessible_resources": ["icons/*.png"]
 }

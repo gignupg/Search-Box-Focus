@@ -3,31 +3,71 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-    <link rel="stylesheet" href="popup.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="materialize/css/materialize.css"
+      media="screen,projection"
+    />
     <title>Search Box Focus</title>
   </head>
   <body>
-    <h1>Search Box Focus</h1>
-    <div>
-      <img
-        src="icons/icons8-google-web-search-full-48.png"
-        alt="Logo"
-        class="logo"
-      />
-      <div class="centered-container">
-        <i
-          style="font-size: 22px"
-          class="power-button fa tooltipped turn-off"
-          data-position="top"
-          data-tooltip="Turn Extension On/Off"
-          >&#xf011;</i
-        >
+    <h5 class="center-align">Search Box Focus</h5>
+    <img
+      src="icons/icons8-google-web-search-full-48.png"
+      alt="Logo"
+      class="logo"
+    />
+    <div class="centered-container">
+      <i
+        style="font-size: 22px"
+        class="power-button fa tooltipped turn-off"
+        data-position="top"
+        data-tooltip="Turn Extension On/Off"
+        >&#xf011;</i
+      >
+    </div>
+    <div id="options">
+      <div class="menu-item">
+        <div class="menu-text">Autofocus</div>
+        <div class="switch menu-switch">
+          <label>
+            <input type="checkbox" />
+            <span class="lever"></span>
+          </label>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-text">Shortcuts</div>
+        <div class="menu-switch"></div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-text">Blacklist</div>
+        <div class="switch menu-switch">
+          <label>
+            <input type="checkbox" />
+            <span class="lever"></span>
+          </label>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-text">Advanced</div>
+        <div class="menu-switch"></div>
       </div>
     </div>
+    <script
+      type="text/javascript"
+      src="materialize/js/materialize.min.js"
+    ></script>
     <script src="popup.js"></script>
   </body>
 </html>

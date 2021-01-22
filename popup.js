@@ -1,5 +1,8 @@
 let extensionOn = null;
 
+// Initializing tooltip
+M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
+
 chrome.storage.sync.get(null, (storage) => {
     extensionOn = storage.enabled || true;
     updatePopup();
@@ -37,10 +40,14 @@ function updatePopup() {
         // Changing the hover color of the power button
         $(".power-button").classList.remove("turn-on");
         $(".power-button").classList.add("turn-off");
+        // Display the options
+        $("#options").classList.remove("hide");
 
     } else {
         // Changing the hover color of the power button
         $(".power-button").classList.remove("turn-off");
         $(".power-button").classList.add("turn-on");
+        // Hide the options
+        $("#options").classList.add("hide");
     }
 }

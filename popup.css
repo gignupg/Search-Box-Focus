@@ -1,5 +1,13 @@
 body {
-    width: 250px;
+    width: 260px;
+}
+
+hr {
+    width: 100%;
+    border: 0;
+    height: 0;
+    border-top: 1px solid rgba(122, 122, 122, 0.3);
+    margin: 0.6em 0;
 }
 
 h1 {
@@ -17,6 +25,7 @@ h1 {
 .centered-container {
     display: flex;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .power-button {
@@ -27,9 +36,42 @@ h1 {
 }
 
 .turn-off:hover {
-    color: rgb(156, 2, 2);
+    color: rgb(95, 66, 12);
 }
 
 .turn-on:hover {
-    color: rgb(133, 200, 255);
+    color:#01579b;
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.menu-text {
+    font-size: 17px;
+    color: black !important;
+    width: 50px;
+    margin-left: 20px;
+}
+
+.menu-switch {
+    width: 50px;
+    margin-right: 20px;
+}
+
+.menu-icon {
+    margin-right: 18px;
+    color: grey;
+}
+
+.menu-button {
+    margin-left: 18px;
+}
+
+.hide {
+    display: none;
 }

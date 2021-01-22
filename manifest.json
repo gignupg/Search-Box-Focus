@@ -1,18 +1,18 @@
 {
-  "name": "Autofocus Search Bar",
+  "name": "Focus Search Box / Search Bar / Search Field",
   "version": "0.1.0",
   "manifest_version": 2,
-  "description": "Automatically focuses the main search bar of any website.",
+  "description": "Press tab once to put your cursor in the search field of any website",
   "icons": {
     "16": "icons/icons8-google-web-search-16.png",
-    "48": "icons/icons8-google-web-search-48.png",
+    "48": "icons/icons8-google-web-search-full-48.png",
     "128": "icons/icons8-google-web-search-128.png"
   },
-  "permissions": ["tabs"],
+  "permissions": ["storage", "tabs"],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["inject.js"]
+      "js": ["content.js"]
     }
   ],
   "browser_action": {
@@ -32,7 +32,7 @@
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "Focus the main search bar"
+      "description": "Focus the Search Box"
     }
   },
   "content_security_policy": "script-src 'self'; object-src 'self'",

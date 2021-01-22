@@ -1,0 +1,35 @@
+body {
+    width: 250px;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 400;
+}
+
+.logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+.centered-container {
+    display: flex;
+    justify-content: center;
+}
+
+.power-button {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.turn-off:hover {
+    color: rgb(156, 2, 2);
+}
+
+.turn-on:hover {
+    color: rgb(133, 200, 255);
+}

@@ -1,22 +1,32 @@
-// Focuses the search bar when the page is first loaded or refreshed
-focusSearchBar();
+let extensionOn = null;
+let tabPressed = 0;
 
-chrome.runtime.onMessage.addListener(
-  function (request) {
-    if (request.action == "focus") {
-      focusSearchBar();
-    }
+chrome.storage.sync.get(null, (storage) => {
+  extensionOn = storage.enabled || true;
+
+  if (extensionOn) {
+    const searchBox = checkUrlForSearchBox() || checkHtmlForSearchBox();
+    listenForTabPress(searchBox);
+    listenForMessage(searchBox);
   }
-);
+});
 
 function getStyle(element, name) {
   return element.currentStyle ? element.currentStyle[name] : window.getComputedStyle ? window.getComputedStyle(element, null).getPropertyValue(name) : null;
 };
 
-function focusSearchBar() {
+function checkUrlForSearchBox() {
+  switch (location.hostname) {
+    case "dictionary.cambridge.org":      // For some reason no "www" required in this case
+      return document.getElementById("searchword");
+    default:
+      return null;
+  }
+}
+
+function checkHtmlForSearchBox() {
   if (document.activeElement.tagName != "INPUT") {
     const inputs = document.body.getElementsByTagName("input");
-    let focused = false;
 
     for (let i = 0; i < inputs.length; i++) {
       const input = inputs[i];
@@ -29,19 +39,15 @@ function focusSearchBar() {
       const isDisabledOrReadonly = input.disabled || input.readOnly;
 
       if (!isHidden && !isDisabledOrReadonly && elementInViewport(input) && isValidFocusableField) {
-        input.focus();
-        focused = true;
-        break;
+        return input;
       }
     }
 
-    if (!focused && inputs.length > 0)
+    if (inputs.length > 0)
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
         if (elementInViewport(input)) {
-          input.focus();
-          focused = true;
-          break;
+          return input;
         }
       }
   }
@@ -58,3 +64,22 @@ function elementInViewport(el) {
 
   return isInViewport;
 };
+
+function listenForTabPress(searchBox) {
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      searchBox.focus();
+      e.preventDefault();
+    }
+  });
+}
+
+function listenForMessage(searchBox) {
+  chrome.runtime.onMessage.addListener((request) => {
+    if (request.action === "focus") {
+      searchBox.focus();
+    } else if (request.action === "initialize") {
+      console.log("do something");
+    }
+  });
+}

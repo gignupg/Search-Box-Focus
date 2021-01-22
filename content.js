@@ -1,24 +1,24 @@
 let extensionOn = null;
-let tabPressed = 0;
 
 chrome.storage.sync.get(null, (storage) => {
   extensionOn = storage.enabled || true;
 
   if (extensionOn) {
-    const searchBox = checkUrlForSearchBox() || checkHtmlForSearchBox();
-    listenForTabPress(searchBox);
-    listenForMessage(searchBox);
+    listenForTabPress();
+    listenForMessage();
   }
 });
+
 
 function getStyle(element, name) {
   return element.currentStyle ? element.currentStyle[name] : window.getComputedStyle ? window.getComputedStyle(element, null).getPropertyValue(name) : null;
 };
 
 function checkUrlForSearchBox() {
+  console.log("checking url");
   switch (location.hostname) {
     case "dictionary.cambridge.org":      // For some reason no "www" required in this case
-      return document.getElementById("searchword");
+      return applyFocus(document.getElementById("searchword"));
     default:
       return null;
   }
@@ -38,48 +38,42 @@ function checkHtmlForSearchBox() {
       const isValidFocusableField = validInputTypes.find(x => x === input.type);
       const isDisabledOrReadonly = input.disabled || input.readOnly;
 
-      if (!isHidden && !isDisabledOrReadonly && elementInViewport(input) && isValidFocusableField) {
-        return input;
+      if (!isHidden && !isDisabledOrReadonly && isValidFocusableField) {
+        return applyFocus(input);
       }
     }
 
-    if (inputs.length > 0)
+    if (inputs.length > 0) {
       for (let i = 0; i < inputs.length; i++) {
-        const input = inputs[i];
-        if (elementInViewport(input)) {
-          return input;
-        }
+        return applyFocus(inputs[i]);
       }
+    }
   }
-};
+}
 
-function elementInViewport(el) {
-  var bounding = el.getBoundingClientRect();
-  const isInViewport = (
-    bounding.top >= 0 &&
-    bounding.left >= 0 &&
-    bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-    bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
-
-  return isInViewport;
-};
-
-function listenForTabPress(searchBox) {
+function listenForTabPress() {
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Tab") {
-      searchBox.focus();
+    // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
+    const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
+    if (searchBoxNotFocused && e.key === "Tab") {
+      focusSearchBox();
       e.preventDefault();
     }
   });
 }
 
-function listenForMessage(searchBox) {
+function listenForMessage() {
   chrome.runtime.onMessage.addListener((request) => {
-    if (request.action === "focus") {
-      searchBox.focus();
-    } else if (request.action === "initialize") {
-      console.log("do something");
-    }
+    if (request.action === "focus") focusSearchBox();
   });
+}
+
+function focusSearchBox() {
+  const urlFound = checkUrlForSearchBox();
+  if (!urlFound) checkHtmlForSearchBox();
+}
+
+function applyFocus(searchBox) {
+  searchBox.focus();
+  return true;
 }

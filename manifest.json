@@ -1,8 +1,8 @@
 {
-  "name": "Focus Search Box / Search Bar / Search Field",
+  "name": "Search Box Focus (easily access any search bar or search field)",
   "version": "0.1.0",
   "manifest_version": 2,
-  "description": "Press tab once to put your cursor in the search field of any website",
+  "description": "Press tab to quickly access the search box of any website. No need to use your mouse!",
   "icons": {
     "16": "icons/icons8-google-web-search-16.png",
     "48": "icons/icons8-google-web-search-full-48.png",

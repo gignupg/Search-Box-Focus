@@ -6,6 +6,10 @@ M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
 
 $(".power-button").addEventListener("click", toggleExtensionOnOff);
 
+$("#shortcut").addEventListener("click", () => {
+    chrome.tabs.create({ active: true, url: "chrome://extensions/shortcuts" });
+});
+
 $("#autofocus").addEventListener("change", updateAutofocusList);
 
 $("#autofocus-tooltip").dataset.tooltip = "My awesome tooltip text";
@@ -58,11 +62,14 @@ function updatePopup() {
         $("#options").classList.add("hide");
     }
 
-    // Update switch
+    // Update autofocus switch and shortcuts
     chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
         const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
 
-        // Check if autofocus is on/off
+        // Make sure the shortcuts are displayed correctly
+        updateDisplayedShortcuts();
+
+        // Turn the visual display of autofocus on/off
         if (autofocusList[thisSite]) {
             $("#autofocus").checked = true;
             $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
@@ -99,3 +106,13 @@ function messageContentScript(message) {
         chrome.tabs.sendMessage(tab[0].id, message);
     });
 };
+
+function updateDisplayedShortcuts() {
+    chrome.commands.getAll((commands) => {
+        commands.forEach(command => {
+            if (command.name === "focus-search-bar" && command.shortcut) {
+                $("#shortcut-display").textContent = `Tab or ${command.shortcut}`;    // innerHTML didn't work for some reason
+            }
+        });
+    });
+}

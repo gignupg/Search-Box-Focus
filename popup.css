@@ -64,8 +64,15 @@ h1 {
 }
 
 .menu-switch {
-    width: 50px;
-    margin-right: 20px;
+    width: 100px;
+    margin-right: -25px;
+}
+
+.menu-shortcut {
+    width: 100px;
+    font-size: 13px;
+    text-align: right;
+    margin-right: 27px;
 }
 
 .menu-icon {
@@ -84,3 +91,4 @@ h1 {
 .pointer {
     cursor: pointer !important;
 }
+

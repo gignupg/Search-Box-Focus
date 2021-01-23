@@ -32,7 +32,7 @@
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "Focus the Search Box"
+      "description": "Focus Search Box"
     }
   },
   "content_security_policy": "script-src 'self'; object-src 'self'",

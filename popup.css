@@ -1,5 +1,5 @@
 body {
-    width: 260px;
+    width: 270px;
 }
 
 hr {
@@ -25,7 +25,6 @@ h1 {
 .centered-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
 }
 
 .power-button {
@@ -36,7 +35,7 @@ h1 {
 }
 
 .turn-off:hover {
-    color: rgb(95, 66, 12);
+    color: #37474f;
 }
 
 .turn-on:hover {
@@ -48,7 +47,12 @@ h1 {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 30px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.menu-item:hover {
+    background-color: rgb(247, 247, 247);
 }
 
 .menu-text {
@@ -56,6 +60,7 @@ h1 {
     color: black !important;
     width: 50px;
     margin-left: 20px;
+    cursor: default;
 }
 
 .menu-switch {
@@ -74,4 +79,8 @@ h1 {
 
 .hide {
     display: none;
+}
+
+.pointer {
+    cursor: pointer !important;
 }

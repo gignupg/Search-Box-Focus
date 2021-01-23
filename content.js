@@ -6,6 +6,7 @@ chrome.storage.sync.get(null, (storage) => {
   if (extensionOn) {
     listenForTabPress();
     listenForMessage();
+    autofocusIfInList();
   }
 });
 
@@ -15,13 +16,14 @@ function getStyle(element, name) {
 };
 
 function checkUrlForSearchBox() {
-  console.log("checking url");
-  switch (location.hostname) {
-    case "dictionary.cambridge.org":      // For some reason no "www" required in this case
-      return applyFocus(document.getElementById("searchword"));
-    default:
-      return null;
-  }
+  chrome.runtime.sendMessage("getUrl", function (response) {
+    switch (response.url) {
+      case "dictionary.cambridge.org":
+        return applyFocus(document.getElementById("searchword"));
+      default:
+        return null;
+    }
+  });
 }
 
 function checkHtmlForSearchBox() {
@@ -64,13 +66,31 @@ function listenForTabPress() {
 
 function listenForMessage() {
   chrome.runtime.onMessage.addListener((request) => {
-    if (request.action === "focus") focusSearchBox();
+    const action = request.action;
+    if (action === "focus") {
+      focusSearchBox();
+
+    } else if (action === "autofocus") {
+      autofocusIfInList();
+    }
   });
 }
 
 function focusSearchBox() {
   const urlFound = checkUrlForSearchBox();
   if (!urlFound) checkHtmlForSearchBox();
+}
+
+function autofocusIfInList() {
+  chrome.storage.sync.get(null, (storage) => {
+    chrome.runtime.sendMessage("getUrl", function (response) {
+      const autofocusList = storage.autofocusList || {};
+      const thisSite = response.url;
+
+      // If current url is in autofocus list, focus the search box
+      if (autofocusList[thisSite]) focusSearchBox();
+    });
+  });
 }
 
 function applyFocus(searchBox) {

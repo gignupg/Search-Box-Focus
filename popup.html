@@ -37,17 +37,22 @@
       >
     </div>
     <div id="options">
-      <div class="menu-item">
+      <div
+        id="autofocus-tooltip"
+        class="menu-item tooltipped"
+        data-position="top"
+        data-tooltip="Activate autofocus for this site"
+      >
         <div class="menu-text">Autofocus</div>
         <div class="switch menu-switch">
           <label>
-            <input type="checkbox" />
+            <input type="checkbox" id="autofocus" />
             <span class="lever"></span>
           </label>
         </div>
       </div>
-      <div class="menu-item">
-        <div class="menu-text">Shortcuts</div>
+      <div class="menu-item pointer">
+        <div class="menu-text pointer">Shortcuts</div>
         <div class="menu-switch"></div>
       </div>
       <div class="menu-item">
@@ -59,8 +64,8 @@
           </label>
         </div>
       </div>
-      <div class="menu-item">
-        <div class="menu-text">Advanced</div>
+      <div class="menu-item pointer">
+        <div class="menu-text pointer">Advanced</div>
         <div class="menu-switch"></div>
       </div>
     </div>

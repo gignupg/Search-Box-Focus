@@ -1,14 +1,21 @@
 let extensionOn = null;
+let autofocusList = null;
 
 // Initializing tooltip
 M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
 
+$(".power-button").addEventListener("click", toggleExtensionOnOff);
+
+$("#autofocus").addEventListener("change", updateAutofocusList);
+
+$("#autofocus-tooltip").dataset.tooltip = "My awesome tooltip text";
+
 chrome.storage.sync.get(null, (storage) => {
     extensionOn = storage.enabled || true;
+    autofocusList = storage.autofocusList || {};
+
     updatePopup();
 });
-
-$(".power-button").addEventListener("click", toggleExtensionOnOff);
 
 function toggleExtensionOnOff() {
     extensionOn = !extensionOn;
@@ -50,4 +57,45 @@ function updatePopup() {
         // Hide the options
         $("#options").classList.add("hide");
     }
+
+    // Update switch
+    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+        const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+
+        // Check if autofocus is on/off
+        if (autofocusList[thisSite]) {
+            $("#autofocus").checked = true;
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
+
+        } else {
+            $("#autofocus").checked = false;
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
+        }
+    });
 }
+
+function updateAutofocusList() {
+    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+        const addToList = $("#autofocus").checked;
+        const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+
+        // Update list locally
+        if (addToList) {
+            autofocusList[thisSite] = true;
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
+
+        } else {
+            delete autofocusList[thisSite];
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
+        }
+
+        // Update chrome storage
+        chrome.storage.sync.set({ autofocusList: autofocusList });
+    });
+}
+
+function messageContentScript(message) {
+    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+        chrome.tabs.sendMessage(tab[0].id, message);
+    });
+};

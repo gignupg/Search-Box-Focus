@@ -1,15 +1,48 @@
 let extensionOn = null;
+let blacklist = null;
 
+// Read chrome storage, update variables and focus search box if necessary
 chrome.storage.sync.get(null, (storage) => {
-  extensionOn = storage.enabled || true;
+  if (storage.enabled !== undefined) {
+    extensionOn = storage.enabled;
+  }
 
+  blacklist = storage.blacklist || {};
+
+  // Autofocus required
+  chrome.runtime.sendMessage("getUrl", function (response) {
+    const autofocus = storage.autofocus || {};
+    const thisSite = response.url;
+
+    // If current url is in autofocus list, focus the search box
+    if (extensionOn && !blacklist[thisSite] && autofocus[thisSite]) {
+      focusSearchBox();
+    }
+  });
+});
+
+// Listen for Tab Press
+window.addEventListener("keydown", (e) => {
+  console.log("tab, state", extensionOn);
   if (extensionOn) {
-    listenForTabPress();
-    listenForMessage();
-    autofocusIfInList();
+    chrome.runtime.sendMessage("getUrl", function (response) {
+      const thisSite = response.url;
+      // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
+      const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
+      if (!blacklist[thisSite] && searchBoxNotFocused && e.key === "Tab") {
+        focusSearchBox();
+        e.preventDefault();
+      }
+    });
   }
 });
 
+// Listen for messages
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.action === "focus") focusSearchBox();
+  if (msg.action === "extension") extensionOn = msg.state;
+  if (msg.action === "blacklist") blacklist = msg.list;
+});
 
 function getStyle(element, name) {
   return element.currentStyle ? element.currentStyle[name] : window.getComputedStyle ? window.getComputedStyle(element, null).getPropertyValue(name) : null;
@@ -53,44 +86,9 @@ function checkHtmlForSearchBox() {
   }
 }
 
-function listenForTabPress() {
-  window.addEventListener("keydown", (e) => {
-    // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
-    const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
-    if (searchBoxNotFocused && e.key === "Tab") {
-      focusSearchBox();
-      e.preventDefault();
-    }
-  });
-}
-
-function listenForMessage() {
-  chrome.runtime.onMessage.addListener((request) => {
-    const action = request.action;
-    if (action === "focus") {
-      focusSearchBox();
-
-    } else if (action === "autofocus") {
-      autofocusIfInList();
-    }
-  });
-}
-
 function focusSearchBox() {
   const urlFound = checkUrlForSearchBox();
   if (!urlFound) checkHtmlForSearchBox();
-}
-
-function autofocusIfInList() {
-  chrome.storage.sync.get(null, (storage) => {
-    chrome.runtime.sendMessage("getUrl", function (response) {
-      const autofocusList = storage.autofocusList || {};
-      const thisSite = response.url;
-
-      // If current url is in autofocus list, focus the search box
-      if (autofocusList[thisSite]) focusSearchBox();
-    });
-  });
 }
 
 function applyFocus(searchBox) {

@@ -1,5 +1,6 @@
 let extensionOn = null;
-let autofocusList = null;
+let autofocus = null;
+let blacklist = null;
 
 // Initializing tooltip
 M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
@@ -10,13 +11,19 @@ $("#shortcut").addEventListener("click", () => {
     chrome.tabs.create({ active: true, url: "chrome://extensions/shortcuts" });
 });
 
-$("#autofocus").addEventListener("change", updateAutofocusList);
+$("#autofocus").addEventListener("change", () => updateList(autofocus, "autofocus"));
+
+$("#blacklist").addEventListener("change", () => updateList(blacklist, "blacklist"));
 
 $("#autofocus-tooltip").dataset.tooltip = "My awesome tooltip text";
 
 chrome.storage.sync.get(null, (storage) => {
-    extensionOn = storage.enabled || true;
-    autofocusList = storage.autofocusList || {};
+    if (storage.enabled !== undefined) {
+        extensionOn = storage.enabled;
+    }
+
+    autofocus = storage.autofocus || {};
+    blacklist = storage.blacklist || {};
 
     updatePopup();
 });
@@ -25,6 +32,10 @@ function toggleExtensionOnOff() {
     extensionOn = !extensionOn;
     updatePopup();
     chrome.storage.sync.set({ enabled: extensionOn });
+    // Update background state
+    chrome.runtime.sendMessage("updateState");
+    // Update content state
+    messageContentScript({ action: "extension", state: extensionOn });
 }
 
 function $(selector, multiple = false) {
@@ -54,6 +65,43 @@ function updatePopup() {
         // Display the options
         $("#options").classList.remove("hide");
 
+        // Update autofocus switch and shortcuts
+        chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+            const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+
+            // Make sure the shortcuts are displayed correctly
+            updateDisplayedShortcuts();
+
+            // Turn the visual display of autofocus on/off
+            if (autofocus[thisSite]) {
+                $("#autofocus").checked = true;
+                $("#autofocus-tooltip").dataset.tooltip = tooltipText("autofocus", thisSite, true);
+
+            } else {
+                $("#autofocus").checked = false;
+                $("#autofocus-tooltip").dataset.tooltip = tooltipText("autofocus", thisSite, false);
+            }
+
+            // Turn blacklist on/off
+            if (blacklist[thisSite]) {
+                $("#blacklist").checked = true;
+                $("#blacklist-tooltip").dataset.tooltip = tooltipText("blacklist", thisSite, true);
+                // Visually disable the extension
+                $("#autofocus-tooltip").dataset.tooltip = tooltipText("autofocus", thisSite, false);
+                $("#autofocus").disabled = true;
+                $(".fadable", true).forEach((elem) => elem.classList.add("disabled"));
+                // Physically disable the extension
+
+            } else {
+                $("#blacklist").checked = false;
+                $("#blacklist-tooltip").dataset.tooltip = tooltipText("blacklist", thisSite, false);
+                // Visually enable the extension
+                $("#autofocus").disabled = false;
+                $(".fadable", true).forEach((elem) => elem.classList.remove("disabled"));
+                // Physically enable the extension
+            }
+        });
+
     } else {
         // Changing the hover color of the power button
         $(".power-button").classList.remove("turn-off");
@@ -61,43 +109,33 @@ function updatePopup() {
         // Hide the options
         $("#options").classList.add("hide");
     }
-
-    // Update autofocus switch and shortcuts
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-        const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-
-        // Make sure the shortcuts are displayed correctly
-        updateDisplayedShortcuts();
-
-        // Turn the visual display of autofocus on/off
-        if (autofocusList[thisSite]) {
-            $("#autofocus").checked = true;
-            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
-
-        } else {
-            $("#autofocus").checked = false;
-            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
-        }
-    });
 }
 
-function updateAutofocusList() {
+function updateList(list, name) {
     chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-        const addToList = $("#autofocus").checked;
+        const addToList = $("#" + name).checked;
         const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
 
         // Update list locally
         if (addToList) {
-            autofocusList[thisSite] = true;
-            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
+            list[thisSite] = true;
 
         } else {
-            delete autofocusList[thisSite];
-            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
+            delete list[thisSite];
         }
 
         // Update chrome storage
-        chrome.storage.sync.set({ autofocusList: autofocusList });
+        chrome.storage.sync.set({ [name]: list });
+
+        updatePopup();
+
+        if (name === "blacklist") {
+            messageContentScript({ action: "blacklist", list: list });
+
+        } else {
+            // Message background script that autofocus has changed
+            chrome.runtime.sendMessage("updateState");
+        }
     });
 }
 
@@ -115,4 +153,21 @@ function updateDisplayedShortcuts() {
             }
         });
     });
+}
+
+function tooltipText(list, url, enabled) {
+    if (list === "blacklist") {
+        if (enabled) {
+            return `Remove "${url}" from blacklist`;
+        } else {
+            return `Add "${url}" to blacklist (disables the extension on this site)`;
+        }
+
+    } else if (list === "autofocus") {
+        if (enabled) {
+            return `Autofocus enabled for "${url}"`;
+        } else {
+            return `Autofocus disabled for "${url}"`;
+        }
+    }
 }

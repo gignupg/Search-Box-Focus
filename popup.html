@@ -29,7 +29,6 @@
     />
     <div class="centered-container">
       <i
-        style="font-size: 22px"
         class="power-button fa tooltipped turn-off"
         data-position="top"
         data-tooltip="Turn Extension On/Off"
@@ -41,9 +40,8 @@
         id="autofocus-tooltip"
         class="menu-item tooltipped"
         data-position="top"
-        data-tooltip="Activate autofocus for this site"
       >
-        <div class="menu-text">Autofocus</div>
+        <div class="menu-text fadable">Autofocus</div>
         <div class="switch menu-switch">
           <label>
             <input type="checkbox" id="autofocus" />
@@ -52,14 +50,18 @@
         </div>
       </div>
       <div id="shortcut" class="menu-item pointer">
-        <div class="menu-text pointer">Shortcuts</div>
-        <div id="shortcut-display" class="menu-shortcut">Tab</div>
+        <div class="menu-text pointer fadable">Shortcuts</div>
+        <div id="shortcut-display" class="menu-shortcut fadable">Tab</div>
       </div>
-      <div class="menu-item">
+      <div
+        id="blacklist-tooltip"
+        class="menu-item tooltipped"
+        data-position="top"
+      >
         <div class="menu-text">Blacklist</div>
         <div class="switch menu-switch">
           <label>
-            <input type="checkbox" />
+            <input type="checkbox" id="blacklist" />
             <span class="lever"></span>
           </label>
         </div>

@@ -29,13 +29,15 @@ h1 {
 
 .power-button {
     text-align: center;
+    color: rgb(92, 92, 92);
+    font-size: 22px !important;
     margin-top: 30px;
     margin-bottom: 20px;
     cursor: pointer;
 }
 
 .turn-off:hover {
-    color: #37474f;
+    color: #4d7d94;
 }
 
 .turn-on:hover {
@@ -92,3 +94,6 @@ h1 {
     cursor: pointer !important;
 }
 
+.disabled {
+    color: rgb(190, 190, 190) !important;
+}

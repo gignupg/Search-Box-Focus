@@ -41,33 +41,33 @@
         class="menu-item tooltipped"
         data-position="top"
       >
-        <div class="menu-text fadable">Autofocus</div>
+        <div class="menu-text">Autofocus</div>
         <div class="switch menu-switch">
           <label>
-            <input type="checkbox" id="autofocus" />
+            <input type="checkbox" id="autofocus-switch" />
             <span class="lever"></span>
           </label>
         </div>
       </div>
-      <div id="shortcut" class="menu-item pointer">
-        <div class="menu-text pointer fadable">Shortcuts</div>
-        <div id="shortcut-display" class="menu-shortcut fadable">Tab</div>
+      <div id="shortcuts" class="menu-item pointer">
+        <div class="menu-text pointer">Shortcuts</div>
+        <div id="shortcut-display" class="menu-shortcut"></div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-text">Tab</div>
+        <div class="switch menu-switch">
+          <label>
+            <input type="checkbox" id="tab-switch" />
+            <span class="lever"></span>
+          </label>
+        </div>
       </div>
       <div
-        id="blacklist-tooltip"
-        class="menu-item tooltipped"
+        class="menu-item pointer tooltipped"
         data-position="top"
+        data-tooltip="Rate or uninstall the extension at the Google Chrome Web Store"
       >
-        <div class="menu-text">Blacklist</div>
-        <div class="switch menu-switch">
-          <label>
-            <input type="checkbox" id="blacklist" />
-            <span class="lever"></span>
-          </label>
-        </div>
-      </div>
-      <div class="menu-item pointer">
-        <div class="menu-text pointer">Advanced</div>
+        <div class="menu-text pointer">Extension</div>
         <div class="menu-switch"></div>
       </div>
     </div>

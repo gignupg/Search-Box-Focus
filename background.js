@@ -1,6 +1,6 @@
-let extensionOn = null;
+let extensionOn = true;
+let tabEnabled = true;
 let autofocus = null;
-let blacklist = null;
 
 updateState();
 
@@ -21,18 +21,22 @@ chrome.runtime.onMessage.addListener(
 chrome.commands.onCommand.addListener((command) => {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
     const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-    if (extensionOn && !blacklist[thisSite] && command === 'focus-search-bar') {
+    if (extensionOn && command === 'focus-search-bar') {
       messageContentScript({ action: "focus" });
     }
   });
 });
 
-// Autofocus
+// On tab change let the content script know to update tabEnabled and to autofocus if enabled
 chrome.tabs.onActivated.addListener(() => {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
     const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-    if (extensionOn && !blacklist[thisSite] && autofocus[thisSite]) {
-      messageContentScript({ action: "focus" });
+    if (extensionOn) {
+      if (autofocus[thisSite]) {
+        messageContentScript({ action: "focus" });
+      }
+
+      messageContentScript({ action: "tab", state: tabEnabled });
     }
   });
 });
@@ -43,8 +47,11 @@ function updateState() {
       extensionOn = storage.enabled;
     }
 
+    if (storage.tabEnabled !== undefined) {
+      tabEnabled = storage.tabEnabled;
+    }
+
     autofocus = storage.autofocus || {};
-    blacklist = storage.blacklist || {};
   });
 }
 

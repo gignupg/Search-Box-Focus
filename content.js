@@ -1,5 +1,5 @@
-let extensionOn = null;
-let blacklist = null;
+let extensionOn = true;
+let tabEnabled = true;
 
 // Read chrome storage, update variables and focus search box if necessary
 chrome.storage.sync.get(null, (storage) => {
@@ -7,7 +7,9 @@ chrome.storage.sync.get(null, (storage) => {
     extensionOn = storage.enabled;
   }
 
-  blacklist = storage.blacklist || {};
+  if (storage.tabEnabled !== undefined) {
+    tabEnabled = storage.tabEnabled;
+  }
 
   // Autofocus required
   chrome.runtime.sendMessage("getUrl", function (response) {
@@ -15,7 +17,7 @@ chrome.storage.sync.get(null, (storage) => {
     const thisSite = response.url;
 
     // If current url is in autofocus list, focus the search box
-    if (extensionOn && !blacklist[thisSite] && autofocus[thisSite]) {
+    if (extensionOn && autofocus[thisSite]) {
       focusSearchBox();
     }
   });
@@ -23,17 +25,14 @@ chrome.storage.sync.get(null, (storage) => {
 
 // Listen for Tab Press
 window.addEventListener("keydown", (e) => {
-  console.log("tab, state", extensionOn);
-  if (extensionOn) {
-    chrome.runtime.sendMessage("getUrl", function (response) {
-      const thisSite = response.url;
-      // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
-      const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
-      if (!blacklist[thisSite] && searchBoxNotFocused && e.key === "Tab") {
-        focusSearchBox();
-        e.preventDefault();
-      }
-    });
+  if (extensionOn && tabEnabled) {
+    const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
+
+    // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
+    if (searchBoxNotFocused && e.key === "Tab") {
+      focusSearchBox();
+      e.preventDefault();
+    }
   }
 });
 
@@ -41,7 +40,7 @@ window.addEventListener("keydown", (e) => {
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === "focus") focusSearchBox();
   if (msg.action === "extension") extensionOn = msg.state;
-  if (msg.action === "blacklist") blacklist = msg.list;
+  if (msg.action === "tab") tabEnabled = msg.state;
 });
 
 function getStyle(element, name) {

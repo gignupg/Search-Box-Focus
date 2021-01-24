@@ -1,50 +1,33 @@
-let extensionOn = null;
+let extensionOn = true;
+let tabEnabled = true;
 let autofocus = null;
-let blacklist = null;
 
 // Initializing tooltip
 M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
 
 $(".power-button").addEventListener("click", toggleExtensionOnOff);
 
-$("#shortcut").addEventListener("click", () => {
+$("#tab-switch").addEventListener("change", toggleTabOnOff);
+
+$("#autofocus-switch").addEventListener("change", updateAutofocusList);
+
+$("#shortcuts").addEventListener("click", () => {
     chrome.tabs.create({ active: true, url: "chrome://extensions/shortcuts" });
 });
-
-$("#autofocus").addEventListener("change", () => updateList(autofocus, "autofocus"));
-
-$("#blacklist").addEventListener("change", () => updateList(blacklist, "blacklist"));
-
-$("#autofocus-tooltip").dataset.tooltip = "My awesome tooltip text";
 
 chrome.storage.sync.get(null, (storage) => {
     if (storage.enabled !== undefined) {
         extensionOn = storage.enabled;
     }
 
+    if (storage.tabEnabled !== undefined) {
+        tabEnabled = storage.tabEnabled;
+    }
+
     autofocus = storage.autofocus || {};
-    blacklist = storage.blacklist || {};
 
     updatePopup();
 });
-
-function toggleExtensionOnOff() {
-    extensionOn = !extensionOn;
-    updatePopup();
-    chrome.storage.sync.set({ enabled: extensionOn });
-    // Update background state
-    chrome.runtime.sendMessage("updateState");
-    // Update content state
-    messageContentScript({ action: "extension", state: extensionOn });
-}
-
-function $(selector, multiple = false) {
-    if (multiple) {
-        return document.querySelectorAll(selector);
-    }
-
-    return document.querySelector(selector);
-}
 
 function updatePopup() {
     const suffix = `${extensionOn ? "" : "_disabled"}.png`;
@@ -65,42 +48,30 @@ function updatePopup() {
         // Display the options
         $("#options").classList.remove("hide");
 
-        // Update autofocus switch and shortcuts
+        updateDisplayedShortcuts();
+
+        // Update the autofocus switch
         chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
             const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
 
-            // Make sure the shortcuts are displayed correctly
-            updateDisplayedShortcuts();
-
             // Turn the visual display of autofocus on/off
             if (autofocus[thisSite]) {
-                $("#autofocus").checked = true;
-                $("#autofocus-tooltip").dataset.tooltip = tooltipText("autofocus", thisSite, true);
+                $("#autofocus-switch").checked = true;
+                $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
 
             } else {
-                $("#autofocus").checked = false;
-                $("#autofocus-tooltip").dataset.tooltip = tooltipText("autofocus", thisSite, false);
-            }
-
-            // Turn blacklist on/off
-            if (blacklist[thisSite]) {
-                $("#blacklist").checked = true;
-                $("#blacklist-tooltip").dataset.tooltip = tooltipText("blacklist", thisSite, true);
-                // Visually disable the extension
-                $("#autofocus-tooltip").dataset.tooltip = tooltipText("autofocus", thisSite, false);
-                $("#autofocus").disabled = true;
-                $(".fadable", true).forEach((elem) => elem.classList.add("disabled"));
-                // Physically disable the extension
-
-            } else {
-                $("#blacklist").checked = false;
-                $("#blacklist-tooltip").dataset.tooltip = tooltipText("blacklist", thisSite, false);
-                // Visually enable the extension
-                $("#autofocus").disabled = false;
-                $(".fadable", true).forEach((elem) => elem.classList.remove("disabled"));
-                // Physically enable the extension
+                $("#autofocus-switch").checked = false;
+                $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
             }
         });
+
+        // Update the tab switch
+        if (tabEnabled) {
+            $("#tab-switch").checked = true;
+
+        } else {
+            $("#tab-switch").checked = false;
+        }
 
     } else {
         // Changing the hover color of the power button
@@ -111,32 +82,82 @@ function updatePopup() {
     }
 }
 
-function updateList(list, name) {
+function updateDisplayedShortcuts() {
+    // Make sure the shortcuts are displayed correctly
+    chrome.commands.getAll((commands) => {
+        let commandExists = false;
+        commands.forEach(command => {
+            if (command.name === "focus-search-bar" && command.shortcut) {
+                commandExists = true;
+
+                if (tabEnabled) {
+                    $("#shortcut-display").textContent = `Tab or ${command.shortcut}`;    // innerHTML didn't work for some reason
+
+                } else {
+                    $("#shortcut-display").textContent = command.shortcut;
+                }
+            }
+        });
+
+        if (!commandExists) {
+            if (tabEnabled) {
+                $("#shortcut-display").textContent = "Tab";
+
+            } else {
+                $("#shortcut-display").textContent = "";
+            }
+        }
+    });
+}
+
+function updateAutofocusList() {
     chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-        const addToList = $("#" + name).checked;
+        const addToList = $("#autofocus-switch").checked;
         const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
 
         // Update list locally
         if (addToList) {
-            list[thisSite] = true;
+            autofocus[thisSite] = true;
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
 
         } else {
-            delete list[thisSite];
+            delete autofocus[thisSite];
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
         }
 
         // Update chrome storage
-        chrome.storage.sync.set({ [name]: list });
-
-        updatePopup();
-
-        if (name === "blacklist") {
-            messageContentScript({ action: "blacklist", list: list });
-
-        } else {
-            // Message background script that autofocus has changed
-            chrome.runtime.sendMessage("updateState");
-        }
+        chrome.storage.sync.set({ autofocus: autofocus });
+        // Message background script that autofocus has changed
+        chrome.runtime.sendMessage("updateState");
     });
+}
+
+function toggleExtensionOnOff() {
+    extensionOn = !extensionOn;
+    updatePopup();
+    chrome.storage.sync.set({ enabled: extensionOn });
+    // Update background state
+    chrome.runtime.sendMessage("updateState");
+    // Update content state
+    messageContentScript({ action: "extension", state: extensionOn });
+}
+
+function toggleTabOnOff() {
+    tabEnabled = !tabEnabled;
+    updateDisplayedShortcuts();
+    chrome.storage.sync.set({ tabEnabled: tabEnabled });
+    // Update background state
+    chrome.runtime.sendMessage("updateState");
+    // Update content state
+    messageContentScript({ action: "tab", state: tabEnabled });
+}
+
+function $(selector, multiple = false) {
+    if (multiple) {
+        return document.querySelectorAll(selector);
+    }
+
+    return document.querySelector(selector);
 }
 
 function messageContentScript(message) {
@@ -144,30 +165,3 @@ function messageContentScript(message) {
         chrome.tabs.sendMessage(tab[0].id, message);
     });
 };
-
-function updateDisplayedShortcuts() {
-    chrome.commands.getAll((commands) => {
-        commands.forEach(command => {
-            if (command.name === "focus-search-bar" && command.shortcut) {
-                $("#shortcut-display").textContent = `Tab or ${command.shortcut}`;    // innerHTML didn't work for some reason
-            }
-        });
-    });
-}
-
-function tooltipText(list, url, enabled) {
-    if (list === "blacklist") {
-        if (enabled) {
-            return `Remove "${url}" from blacklist`;
-        } else {
-            return `Add "${url}" to blacklist (disables the extension on this site)`;
-        }
-
-    } else if (list === "autofocus") {
-        if (enabled) {
-            return `Autofocus enabled for "${url}"`;
-        } else {
-            return `Autofocus disabled for "${url}"`;
-        }
-    }
-}

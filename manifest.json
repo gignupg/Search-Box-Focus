@@ -1,8 +1,8 @@
 {
-  "name": "Search Box Focus (easily access any search bar or search field)",
+  "name": "Search Box Focus (hit tab, start searching)",
   "version": "0.1.0",
   "manifest_version": 2,
-  "description": "Press tab to quickly access the search box of any website. No need to use your mouse!",
+  "description": "Press tab to quickly access the main search bar or search field of any website. No need to use your mouse! Autofocus available!",
   "icons": {
     "16": "icons/icons8-google-web-search-16.png",
     "48": "icons/icons8-google-web-search-full-48.png",
@@ -32,7 +32,7 @@
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "Focus Search Box"
+      "description": "Search Box Focus"
     }
   },
   "content_security_policy": "script-src 'self'; object-src 'self'",

@@ -1,5 +1,7 @@
 # Search Box Focus
 
+Install the extension from the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm).
+
 You hate taking your hand off the keyboard all the time only to access the search bar of the website you're visiting?
 
 You'd love to simply press tab or a custom shortcut to focus the search field and start typing right away without ever using your mouse?
@@ -8,7 +10,7 @@ You'd love to simply press tab or a custom shortcut to focus the search field an
 
 The extension is completely open source which means, no tracking or data collection. No ads! 
 
-Feel free suggest new features, report bugs and so on at [the GitHub repository](https://github.com/gignupg/Search-Box-Focus).
+Feel free suggest new features, report bugs and so on.
 
 Credits: 
 Search Box Focus mainly uses the search box detection code of [this Github repository](https://github.com/CodeRevver/Focus-First-Input). 

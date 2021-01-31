@@ -5,6 +5,7 @@ Install the extension from the [Chrome Web Store](https://chrome.google.com/webs
 ![image](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%201.png)
 
 
+
 ![image-2](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%202.png)
 
 

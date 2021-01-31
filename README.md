@@ -18,3 +18,5 @@ Search Box Focus mainly uses the search box detection code of [this Github repos
 The extension icon can be found [here](https://icons8.com/icon/48167/google-web-search).
 
 ![image](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%201.png)
+
+![image-2](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%202.png)

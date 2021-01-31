@@ -21,11 +21,11 @@
     <title>Search Box Focus</title>
   </head>
   <body>
-    <h5 class="center-align">Search Box Focus</h5>
+    <h5 id="heading" class="center-align">Search Box Focus</h5>
     <img
       src="icons/icons8-google-web-search-full-48.png"
       alt="Logo"
-      class="logo"
+      id="logo"
     />
     <div class="centered-container">
       <i
@@ -49,11 +49,7 @@
           </label>
         </div>
       </div>
-      <div id="shortcuts" class="menu-item pointer">
-        <div class="menu-text pointer">Shortcuts</div>
-        <div id="shortcut-display" class="menu-shortcut"></div>
-      </div>
-      <div class="menu-item">
+      <div id="tab-tooltip" class="menu-item tooltipped" data-position="top">
         <div class="menu-text">Tab</div>
         <div class="switch menu-switch">
           <label>
@@ -62,13 +58,9 @@
           </label>
         </div>
       </div>
-      <div
-        class="menu-item pointer tooltipped"
-        data-position="top"
-        data-tooltip="Rate or uninstall the extension at the Google Chrome Web Store"
-      >
-        <div class="menu-text pointer">Extension</div>
-        <div class="menu-switch"></div>
+      <div id="shortcuts" class="menu-item pointer">
+        <div class="menu-text pointer">Shortcuts</div>
+        <div id="shortcut-display" class="menu-shortcut"></div>
       </div>
     </div>
     <script

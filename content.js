@@ -1,5 +1,6 @@
 let extensionOn = true;
-let tabEnabled = true;
+let tabList = null;
+let thisSite = null;
 
 // Read chrome storage, update variables and focus search box if necessary
 chrome.storage.sync.get(null, (storage) => {
@@ -7,14 +8,12 @@ chrome.storage.sync.get(null, (storage) => {
     extensionOn = storage.enabled;
   }
 
-  if (storage.tabEnabled !== undefined) {
-    tabEnabled = storage.tabEnabled;
-  }
+  tabList = storage.tabList || {};
 
   // Autofocus required
   chrome.runtime.sendMessage("getUrl", function (response) {
     const autofocus = storage.autofocus || {};
-    const thisSite = response.url;
+    thisSite = response.url;
 
     // If current url is in autofocus list, focus the search box
     if (extensionOn && autofocus[thisSite]) {
@@ -25,7 +24,7 @@ chrome.storage.sync.get(null, (storage) => {
 
 // Listen for Tab Press
 window.addEventListener("keydown", (e) => {
-  if (extensionOn && tabEnabled) {
+  if (extensionOn && !tabList[thisSite]) {
     const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
 
     // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
@@ -40,7 +39,7 @@ window.addEventListener("keydown", (e) => {
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === "focus") focusSearchBox();
   if (msg.action === "extension") extensionOn = msg.state;
-  if (msg.action === "tab") tabEnabled = msg.state;
+  if (msg.action === "tabList") tabList = msg.list;
 });
 
 function getStyle(element, name) {

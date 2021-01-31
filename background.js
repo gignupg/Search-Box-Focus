@@ -1,5 +1,5 @@
 let extensionOn = true;
-let tabEnabled = true;
+let tabList = null;
 let autofocus = null;
 
 updateState();
@@ -27,7 +27,7 @@ chrome.commands.onCommand.addListener((command) => {
   });
 });
 
-// On tab change let the content script know to update tabEnabled and to autofocus if enabled
+// On tab change let the content script know to update tabList and to autofocus if enabled
 chrome.tabs.onActivated.addListener(() => {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
     const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
@@ -36,7 +36,7 @@ chrome.tabs.onActivated.addListener(() => {
         messageContentScript({ action: "focus" });
       }
 
-      messageContentScript({ action: "tab", state: tabEnabled });
+      messageContentScript({ action: "tabList", list: tabList });
     }
   });
 });
@@ -47,10 +47,7 @@ function updateState() {
       extensionOn = storage.enabled;
     }
 
-    if (storage.tabEnabled !== undefined) {
-      tabEnabled = storage.tabEnabled;
-    }
-
+    tabList = storage.tabList || {};
     autofocus = storage.autofocus || {};
   });
 }

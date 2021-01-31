@@ -1,5 +1,5 @@
 {
-  "name": "Search Box Focus (hit tab, start searching)",
+  "name": "Search Box Focus (Hit tab, start searching)",
   "version": "0.1.0",
   "manifest_version": 2,
   "description": "Press tab to quickly access the main search bar or search field of any website. No need to use your mouse! Autofocus available!",

@@ -1,6 +1,13 @@
 let extensionOn = true;
-let tabEnabled = true;
+let tabList = null;
 let autofocus = null;
+let thisSite = null;
+let tabId = null;
+
+chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+    thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+    tabId = tab[0].id;
+});
 
 // Initializing tooltip
 M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
@@ -15,15 +22,20 @@ $("#shortcuts").addEventListener("click", () => {
     chrome.tabs.create({ active: true, url: "chrome://extensions/shortcuts" });
 });
 
+$("#heading").addEventListener("click", () => {
+    chrome.tabs.create({ active: true, url: "https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm" });
+});
+
+$("#logo").addEventListener("click", () => {
+    chrome.tabs.create({ active: true, url: "https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm" });
+});
+
 chrome.storage.sync.get(null, (storage) => {
     if (storage.enabled !== undefined) {
         extensionOn = storage.enabled;
     }
 
-    if (storage.tabEnabled !== undefined) {
-        tabEnabled = storage.tabEnabled;
-    }
-
+    tabList = storage.tabList || {};
     autofocus = storage.autofocus || {};
 
     updatePopup();
@@ -39,7 +51,7 @@ function updatePopup() {
         }
     });
 
-    $(".logo").src = "icons/icons8-google-web-search-full-48" + suffix;
+    $("#logo").src = "icons/icons8-google-web-search-full-48" + suffix;
 
     if (extensionOn) {
         // Changing the hover color of the power button
@@ -50,28 +62,26 @@ function updatePopup() {
 
         updateDisplayedShortcuts();
 
-        // Update the autofocus switch
-        chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-            const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-
-            // Turn the visual display of autofocus on/off
-            if (autofocus[thisSite]) {
-                $("#autofocus-switch").checked = true;
-                $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
-
-            } else {
-                $("#autofocus-switch").checked = false;
-                $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
-            }
-        });
-
         // Update the tab switch
-        if (tabEnabled) {
-            $("#tab-switch").checked = true;
+        if (tabList[thisSite]) {
+            $("#tab-switch").checked = false;
+            $("#tab-tooltip").dataset.tooltip = `Tab disabled for "${thisSite}"`;
 
         } else {
-            $("#tab-switch").checked = false;
+            $("#tab-switch").checked = true;
+            $("#tab-tooltip").dataset.tooltip = `Tab enabled for "${thisSite}"`;
         }
+
+        // Turn the visual display of autofocus on/off
+        if (autofocus[thisSite]) {
+            $("#autofocus-switch").checked = true;
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
+
+        } else {
+            $("#autofocus-switch").checked = false;
+            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
+        }
+
 
     } else {
         // Changing the hover color of the power button
@@ -90,46 +100,43 @@ function updateDisplayedShortcuts() {
             if (command.name === "focus-search-bar" && command.shortcut) {
                 commandExists = true;
 
-                if (tabEnabled) {
-                    $("#shortcut-display").textContent = `Tab or ${command.shortcut}`;    // innerHTML didn't work for some reason
+                if (tabList[thisSite]) {
+                    $("#shortcut-display").textContent = command.shortcut;
 
                 } else {
-                    $("#shortcut-display").textContent = command.shortcut;
+                    $("#shortcut-display").textContent = `Tab or ${command.shortcut}`;
                 }
             }
         });
 
         if (!commandExists) {
-            if (tabEnabled) {
-                $("#shortcut-display").textContent = "Tab";
+            if (tabList[thisSite]) {
+                $("#shortcut-display").textContent = "";
 
             } else {
-                $("#shortcut-display").textContent = "";
+                $("#shortcut-display").textContent = "Tab";
             }
         }
     });
 }
 
 function updateAutofocusList() {
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-        const addToList = $("#autofocus-switch").checked;
-        const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+    const addToList = $("#autofocus-switch").checked;
 
-        // Update list locally
-        if (addToList) {
-            autofocus[thisSite] = true;
-            $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
+    // Update list locally
+    if (addToList) {
+        autofocus[thisSite] = true;
+        $("#autofocus-tooltip").dataset.tooltip = `Autofocus enabled for "${thisSite}"`;
 
-        } else {
-            delete autofocus[thisSite];
-            $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
-        }
+    } else {
+        delete autofocus[thisSite];
+        $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
+    }
 
-        // Update chrome storage
-        chrome.storage.sync.set({ autofocus: autofocus });
-        // Message background script that autofocus has changed
-        chrome.runtime.sendMessage("updateState");
-    });
+    // Update chrome storage
+    chrome.storage.sync.set({ autofocus: autofocus });
+    // Message background script that autofocus has changed
+    chrome.runtime.sendMessage("updateState");
 }
 
 function toggleExtensionOnOff() {
@@ -139,17 +146,25 @@ function toggleExtensionOnOff() {
     // Update background state
     chrome.runtime.sendMessage("updateState");
     // Update content state
-    messageContentScript({ action: "extension", state: extensionOn });
+    chrome.tabs.sendMessage(tabId, { action: "extension", state: extensionOn });
 }
 
 function toggleTabOnOff() {
-    tabEnabled = !tabEnabled;
+    if (tabList[thisSite]) {
+        tabList[thisSite] = false;
+        $("#tab-tooltip").dataset.tooltip = `Tab enabled for "${thisSite}"`;
+
+    } else {
+        tabList[thisSite] = true;
+        $("#tab-tooltip").dataset.tooltip = `Tab disabled for "${thisSite}"`;
+    }
+
     updateDisplayedShortcuts();
-    chrome.storage.sync.set({ tabEnabled: tabEnabled });
+    chrome.storage.sync.set({ tabList: tabList });
     // Update background state
     chrome.runtime.sendMessage("updateState");
     // Update content state
-    messageContentScript({ action: "tab", state: tabEnabled });
+    chrome.tabs.sendMessage(tabId, { action: "tabList", list: tabList });
 }
 
 function $(selector, multiple = false) {
@@ -159,9 +174,3 @@ function $(selector, multiple = false) {
 
     return document.querySelector(selector);
 }
-
-function messageContentScript(message) {
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-        chrome.tabs.sendMessage(tab[0].id, message);
-    });
-};

@@ -9,4 +9,5 @@ Feel free suggest new features, report bugs and so on on [GitHub](https://github
 
 Credits: 
 Search Box Focus mainly uses the search box detection code of [this Github repository](https://github.com/CodeRevver/Focus-First-Input). 
+
 The extension icon can be found [here](https://icons8.com/icon/48167/google-web-search).

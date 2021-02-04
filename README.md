@@ -16,7 +16,7 @@ The extension is completely open source which means, no tracking or data collect
 
 Feel free suggest new features, report bugs and so on right here on Github.
 
-###Credits: 
+### Credits: 
 
 Search Box Focus mainly uses the search box detection code of [this Github repository](https://github.com/CodeRevver/Focus-First-Input). 
 

@@ -3,7 +3,7 @@
 Install the extension at the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm).
 
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/users/amgmdnojamodmpfjaokfgpijhpcednjm?label=Downloads)
-![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/amgmdnojamodmpfjaokfgpijhpcednjm?label=Amount%20of%20votes)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/amgmdnojamodmpfjaokfgpijhpcednjm?color=blue&label=Amount%20of%20votes)
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/amgmdnojamodmpfjaokfgpijhpcednjm?color=green&label=Ratings)
 
 ![image](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%201.png)

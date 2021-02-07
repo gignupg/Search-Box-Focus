@@ -30,4 +30,4 @@ The icon can be found [here](https://icons8.com/icon/48167/google-web-search).
 ### License
 The MIT License (MIT)
 
-![License](https://img.shields.io/badge/license-MIT-yellowgreen)
+![License](https://img.shields.io/badge/License-MIT-yellowgreen)

@@ -18,7 +18,7 @@ You'd love to simply press tab or a custom shortcut to focus the search field an
 
 The extension is completely open source which means, no tracking or data collection. No ads! 
 
-Feel free suggest new features, report bugs and so on right here on Github.
+Feel free to suggest new features, report bugs and so on right here on Github.
 
 ### Credits: 
 

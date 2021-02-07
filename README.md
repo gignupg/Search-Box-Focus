@@ -1,6 +1,8 @@
 # Search Box Focus
 
-Install the extension from the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm). ![Chrome Web Store](https://img.shields.io/chrome-web-store/users/amgmdnojamodmpfjaokfgpijhpcednjm)
+Install the extension from the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm).
+
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/amgmdnojamodmpfjaokfgpijhpcednjm?label=Downloads)
 
 ![image](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%201.png)
 

@@ -8,8 +8,10 @@ Get the extension at the [Chrome Web Store](https://chrome.google.com/webstore/d
 
 <img src="/icons/Chrome%20Web%20Store/chrome%20store%201.png">
 
+<pre>
 You hate taking your hand off the keyboard all the time only to access the search bar of the website you're visiting?
-\nYou'd love to simply press tab or a custom shortcut to focus the search field and start typing right away without ever using your mouse
+You'd love to simply press tab or a custom shortcut to focus the search field and start typing right away without ever using your mouse
+</pre>
 
 <img src="/icons/Chrome%20Web%20Store/chrome%20store%202.png" align="right">
 

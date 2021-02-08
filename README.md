@@ -6,8 +6,8 @@ Get the extension at the [Chrome Web Store](https://chrome.google.com/webstore/d
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/amgmdnojamodmpfjaokfgpijhpcednjm?color=blue&label=Amount%20of%20votes)
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/amgmdnojamodmpfjaokfgpijhpcednjm?color=green&label=Rating)
 
-![image](https://github.com/gignupg/Search-Box-Focus/blob/main/icons/Chrome%20Web%20Store/chrome%20store%201.png)
-<img src="/icons/Chrome%20Web%20Store/chrome%20store%202.png" align="right">
+<img src="/icons/Chrome%20Web%20Store/chrome%20store%201.png" align="right">
+<img src="/icons/Chrome%20Web%20Store/chrome%20store%202.png" align="left">
 
 You hate taking your hand off the keyboard all the time only to access the search bar of the website you're visiting?
 

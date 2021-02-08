@@ -1,36 +1,16 @@
 # Search Box Focus
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Get the extension at the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm).
 
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/users/amgmdnojamodmpfjaokfgpijhpcednjm?label=Downloads)
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/amgmdnojamodmpfjaokfgpijhpcednjm?color=blue&label=Amount%20of%20votes)
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/amgmdnojamodmpfjaokfgpijhpcednjm?color=green&label=Rating)
 
-&nbsp;
-
 <img src="/icons/Chrome%20Web%20Store/chrome%20store%201.png">
-
-&nbsp;
 
 You hate taking your hand off the keyboard all the time only to access the search bar of the website you're visiting?
 
 You'd love to simply press tab or a custom shortcut to focus the search field and start typing right away without ever using your mouse
-
-&nbsp;
 
 <img src="/icons/Chrome%20Web%20Store/chrome%20store%202.png" align="right">
 

@@ -1,5 +1,7 @@
 # Search Box Focus
 
+&nbsp;
+
 Get the extension at the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm).
 
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/users/amgmdnojamodmpfjaokfgpijhpcednjm?label=Downloads)

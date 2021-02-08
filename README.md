@@ -6,6 +6,8 @@ Get the extension at the [Chrome Web Store](https://chrome.google.com/webstore/d
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/amgmdnojamodmpfjaokfgpijhpcednjm?color=blue&label=Amount%20of%20votes)
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/amgmdnojamodmpfjaokfgpijhpcednjm?color=green&label=Rating)
 
+&nbsp;
+
 <img src="/icons/Chrome%20Web%20Store/chrome%20store%201.png">
 
 &nbsp;

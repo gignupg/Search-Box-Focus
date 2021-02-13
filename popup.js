@@ -5,6 +5,10 @@ let thisSite = null;
 let tabId = null;
 
 chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+    isContentScriptRunning(tab[0]);
+});
+
+chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
     thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
     tabId = tab[0].id;
 });
@@ -173,4 +177,29 @@ function $(selector, multiple = false) {
     }
 
     return document.querySelector(selector);
+}
+
+function isContentScriptRunning(tab) {
+    let contentOn = null;
+
+    // send message to backgroundscript to see if it is enabled
+    chrome.tabs.sendMessage(tab.id, { action: "contentRunning" }, (response) => {
+        contentOn = response;
+    });
+
+    // After 1 second, if there is no response show the reload dialog
+    setTimeout(() => {
+        if (tab.url === "chrome://extensions/" || tab.url === "chrome://newtab/") {
+            alert("Search Box Focus has no access to this site, sorry!");
+
+        } else if (!contentOn) {
+            // Tell the user to reload the page!
+            let confirmation = confirm('To use Search Box Focus please reload the page! Reload now?');
+            if (confirmation == true) {
+                chrome.tabs.reload(tab.id);
+            }
+
+            window.close();
+        }
+    }, 500);
 }

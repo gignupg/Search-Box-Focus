@@ -29,17 +29,31 @@ window.addEventListener("keydown", (e) => {
 
     // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
     if (searchBoxNotFocused && e.key === "Tab") {
-      focusSearchBox();
-      e.preventDefault();
+      // Send message to backgroundscript to see if it is running
+      chrome.runtime.sendMessage("backgroundRunning", () => {
+        // If the response function gets executed, focus the Search Box!
+        focusSearchBox();
+        e.preventDefault();
+      });
     }
   }
 });
 
 // Listen for messages
-chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.action === "focus") focusSearchBox();
-  if (msg.action === "extension") extensionOn = msg.state;
-  if (msg.action === "tabList") tabList = msg.list;
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  switch (msg.action) {
+    case "focus":
+      focusSearchBox();
+      break;
+    case "extension":
+      extensionOn = msg.state;
+      break;
+    case "tabList":
+      tabList = msg.list;
+      break;
+    case "contentRunning":
+      sendResponse(true);
+  }
 });
 
 function getStyle(element, name) {

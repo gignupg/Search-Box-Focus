@@ -13,18 +13,23 @@ chrome.runtime.onMessage.addListener(
 
     } else if (request === "updateState") {
       updateState();
+
+    } else if (request === "backgroundRunning") {
+      sendResponse(true);
     }
   }
 );
 
-// Shortcut
+// Shortcut (Alt + S by default)
 chrome.commands.onCommand.addListener((command) => {
-  chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-    const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-    if (extensionOn && command === 'focus-search-bar') {
-      messageContentScript({ action: "focus" });
-    }
-  });
+  if (extensionOn && command === 'focus-search-bar') {
+    // Send message to content script 
+    messageContentScript({ action: "focus" });
+
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tab) {
+      isContentScriptRunning(tab[0]);
+    });
+  }
 });
 
 // On tab change let the content script know to update tabList and to autofocus if enabled
@@ -34,6 +39,7 @@ chrome.tabs.onActivated.addListener(() => {
     if (extensionOn) {
       if (autofocus[thisSite]) {
         messageContentScript({ action: "focus" });
+        isContentScriptRunning(tab[0]);
       }
 
       messageContentScript({ action: "tabList", list: tabList });
@@ -50,6 +56,29 @@ function updateState() {
     tabList = storage.tabList || {};
     autofocus = storage.autofocus || {};
   });
+}
+
+function isContentScriptRunning(tab) {
+  let contentOn = null;
+
+  // send message to backgroundscript to see if it is enabled
+  chrome.tabs.sendMessage(tab.id, { action: "contentRunning" }, (response) => {
+    contentOn = response;
+  });
+
+  // After 1 second, if there is no response show the reload dialog
+  setTimeout(() => {
+    if (tab.url === "chrome://extensions/" || tab.url === "chrome://newtab/") {
+      alert("Search Box Focus has no access to this site, sorry!");
+
+    } else if (!contentOn) {
+      // Tell the user to reload the page!
+      let confirmation = confirm('To use Search Box Focus please reload the page! Reload now?');
+      if (confirmation == true) {
+        chrome.tabs.reload(tab.id);
+      }
+    }
+  }, 500);
 }
 
 // Outgoing messages

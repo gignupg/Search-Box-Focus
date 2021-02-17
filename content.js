@@ -105,5 +105,6 @@ function focusSearchBox() {
 
 function applyFocus(searchBox) {
   searchBox.focus();
+  searchBox.select();
   return true;
 }

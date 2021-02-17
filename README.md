@@ -27,6 +27,6 @@ The icon can be found [here](https://icons8.com/icon/48167/google-web-search).
 
 
 ### License
-The MIT License (MIT)
+This project is licensed under the MIT License
 
 ![License](https://img.shields.io/badge/License-MIT-yellowgreen)

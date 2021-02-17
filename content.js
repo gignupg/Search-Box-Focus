@@ -63,7 +63,7 @@ function getStyle(element, name) {
 function checkUrlForSearchBox() {
   chrome.runtime.sendMessage("getUrl", function (response) {
     switch (response.url) {
-      case "dictionary.cambridge.org":
+      case "www.dictionary.cambridge.org":
         return applyFocus(document.getElementById("searchword"));
       default:
         return null;

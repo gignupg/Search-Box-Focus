@@ -1,6 +1,6 @@
 {
   "name": "Search Box Focus",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "manifest_version": 2,
   "description": "Press tab to quickly access the main search bar or search field of any website. No need to use your mouse! Autofocus available!",
   "icons": {

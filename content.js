@@ -23,7 +23,7 @@ chrome.storage.sync.get(null, (storage) => {
 });
 
 // Listen for Tab Press
-window.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", (e) => {
   if (extensionOn && !tabList[thisSite]) {
     const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
 

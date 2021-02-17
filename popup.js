@@ -10,6 +10,8 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
 
 chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
     thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+    // Add www. to the url if it's not already there. 
+    if (!/^www/.test(thisSite)) thisSite = "www." + thisSite;
     tabId = tab[0].id;
 });
 

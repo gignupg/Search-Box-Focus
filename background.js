@@ -8,8 +8,10 @@ updateState();
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request === "getUrl") {
-      const hostname = sender.tab.url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-      sendResponse({ url: hostname });
+      let thisSite = sender.tab.url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+      if (!/^www/.test(thisSite)) thisSite = "www." + thisSite;
+
+      sendResponse({ url: thisSite });
 
     } else if (request === "updateState") {
       updateState();
@@ -35,7 +37,8 @@ chrome.commands.onCommand.addListener((command) => {
 // On tab change let the content script know to update tabList and to autofocus if enabled
 chrome.tabs.onActivated.addListener(() => {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-    const thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+    let thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+    if (!/^www/.test(thisSite)) thisSite = "www." + thisSite;
     if (extensionOn) {
       if (autofocus[thisSite]) {
         messageContentScript({ action: "focus" });

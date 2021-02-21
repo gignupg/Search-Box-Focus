@@ -81,7 +81,7 @@ function isContentScriptRunning(tab) {
         chrome.tabs.reload(tab.id);
       }
     }
-  }, 500);
+  }, 2000);
 }
 
 // Outgoing messages

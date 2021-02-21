@@ -203,5 +203,5 @@ function isContentScriptRunning(tab) {
 
             window.close();
         }
-    }, 500);
+    }, 2000);
 }

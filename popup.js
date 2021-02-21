@@ -196,12 +196,11 @@ function isContentScriptRunning(tab) {
 
         } else if (!contentOn) {
             // Tell the user to reload the page!
-            let confirmation = confirm('To use Search Box Focus please reload the page! Reload now?');
-            if (confirmation == true) {
+            const confirmation = confirm('To use Search Box Focus please reload the page! Reload now?');
+            if (confirmation) {
                 chrome.tabs.reload(tab.id);
+                window.close();
             }
-
-            window.close();
         }
     }, 2000);
 }

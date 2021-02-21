@@ -35,9 +35,17 @@ h1 {
 .power-button {
     text-align: center;
     color: rgb(92, 92, 92);
-    font-size: 22px !important;
+    font-size: 24px !important;
     margin-top: 30px;
     margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.tab-power-button {
+    text-align: center;
+    color: rgb(92, 92, 92);
+    margin-left: -135px;
+    font-size: 17px !important;
     cursor: pointer;
 }
 
@@ -59,12 +67,16 @@ h1 {
 }
 
 .menu-item:hover {
+    background-color: rgb(239, 239, 239);
+}
+
+.gray-bg {
     background-color: rgb(247, 247, 247);
 }
 
 .menu-text {
     font-size: 17px;
-    color: black !important;
+    color: black;
     width: 50px;
     margin-left: 20px;
     cursor: default;

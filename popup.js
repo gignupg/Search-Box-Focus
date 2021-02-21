@@ -1,4 +1,5 @@
 let extensionOn = true;
+let tabOn = true;
 let tabList = null;
 let autofocus = null;
 let thisSite = null;
@@ -19,6 +20,8 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
 M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
 
 $(".power-button").addEventListener("click", toggleExtensionOnOff);
+
+$("#tab-power-button").addEventListener("click", tabPermanentlyOnOff);
 
 $("#tab-switch").addEventListener("change", toggleTabOnOff);
 
@@ -41,10 +44,15 @@ chrome.storage.sync.get(null, (storage) => {
         extensionOn = storage.enabled;
     }
 
+    if (storage.tabOn !== undefined) {
+        tabOn = storage.tabOn;
+    }
+
     tabList = storage.tabList || {};
     autofocus = storage.autofocus || {};
 
     updatePopup();
+    updateDisplayedShortcuts();
 });
 
 function updatePopup() {
@@ -66,8 +74,6 @@ function updatePopup() {
         // Display the options
         $("#options").classList.remove("hide");
 
-        updateDisplayedShortcuts();
-
         // Update the tab switch
         if (tabList[thisSite]) {
             $("#tab-switch").checked = false;
@@ -88,6 +94,14 @@ function updatePopup() {
             $("#autofocus-tooltip").dataset.tooltip = `Autofocus disabled for "${thisSite}"`;
         }
 
+        // Visually disable the whole Tab section if necessary
+        if (!tabOn) {
+            $("#tab-switch").disabled = true;
+            $("#tab-text").style.color = "gray";
+            $("#tab-section").classList.add("gray-bg");
+            $("#tab-power-button").style.color = "gray";
+        }
+
 
     } else {
         // Changing the hover color of the power button
@@ -106,7 +120,7 @@ function updateDisplayedShortcuts() {
             if (command.name === "focus-search-bar" && command.shortcut) {
                 commandExists = true;
 
-                if (tabList[thisSite]) {
+                if (!tabOn || tabList[thisSite]) {
                     $("#shortcut-display").textContent = command.shortcut;
 
                 } else {
@@ -116,7 +130,7 @@ function updateDisplayedShortcuts() {
         });
 
         if (!commandExists) {
-            if (tabList[thisSite]) {
+            if (!tabOn || tabList[thisSite]) {
                 $("#shortcut-display").textContent = "";
 
             } else {
@@ -153,6 +167,28 @@ function toggleExtensionOnOff() {
     chrome.runtime.sendMessage("updateState");
     // Update content state
     chrome.tabs.sendMessage(tabId, { action: "extension", state: extensionOn });
+}
+
+function tabPermanentlyOnOff() {
+    if (tabOn) {
+        tabOn = false;
+        $("#tab-switch").disabled = true;
+        $("#tab-text").style.color = "gray";
+        $("#tab-section").classList.add("gray-bg");
+        $("#tab-power-button").style.color = "gray";
+        chrome.storage.sync.set({ tabOn: tabOn });
+
+    } else {
+        tabOn = true;
+        $("#tab-switch").disabled = false;
+        $("#tab-text").style.color = "black";
+        $("#tab-section").classList.remove("gray-bg");
+        $("#tab-power-button").style.color = "rgb(70, 70, 70)";
+        chrome.storage.sync.set({ tabOn: tabOn });
+    }
+
+    updateDisplayedShortcuts();
+    chrome.tabs.sendMessage(tabId, { action: "tabOn", state: tabOn });
 }
 
 function toggleTabOnOff() {

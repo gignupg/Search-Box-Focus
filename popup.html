@@ -36,23 +36,26 @@
       >
     </div>
     <div id="options">
-      <div
-        id="autofocus-tooltip"
-        class="menu-item tooltipped"
-        data-position="top"
-      >
+      <div class="menu-item">
         <div class="menu-text">Autofocus</div>
         <div class="switch menu-switch">
-          <label>
+          <label id="autofocus-tooltip" class="tooltipped" data-position="top">
             <input type="checkbox" id="autofocus-switch" />
             <span class="lever"></span>
           </label>
         </div>
       </div>
-      <div id="tab-tooltip" class="menu-item tooltipped" data-position="top">
-        <div class="menu-text">Tab</div>
+      <div id="tab-section" class="menu-item">
+        <div id="tab-text" class="menu-text">Tab</div>
+        <i
+          id="tab-power-button"
+          class="tab-power-button fa tooltipped tab-turn-off-on"
+          data-position="top"
+          data-tooltip="Permanently enable/disable Tab"
+          >&#xf011;</i
+        >
         <div class="switch menu-switch">
-          <label>
+          <label id="tab-tooltip" class="tooltipped" data-position="top">
             <input type="checkbox" id="tab-switch" />
             <span class="lever"></span>
           </label>

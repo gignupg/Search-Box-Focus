@@ -1,4 +1,5 @@
 let extensionOn = true;
+let tabOn = true;
 let tabList = null;
 let thisSite = null;
 
@@ -6,6 +7,10 @@ let thisSite = null;
 chrome.storage.sync.get(null, (storage) => {
   if (storage.enabled !== undefined) {
     extensionOn = storage.enabled;
+  }
+
+  if (storage.tabOn !== undefined) {
+    tabOn = storage.tabOn;
   }
 
   tabList = storage.tabList || {};
@@ -24,7 +29,7 @@ chrome.storage.sync.get(null, (storage) => {
 
 // Listen for Tab Press
 document.addEventListener("keydown", (e) => {
-  if (extensionOn && !tabList[thisSite]) {
+  if (extensionOn && tabOn && !tabList[thisSite]) {
     const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
 
     // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
@@ -47,6 +52,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       break;
     case "extension":
       extensionOn = msg.state;
+      break;
+    case "tabOn":
+      tabOn = msg.state;
       break;
     case "tabList":
       tabList = msg.list;

@@ -2,7 +2,7 @@
   "name": "Search Box Focus",
   "version": "0.3.5",
   "manifest_version": 2,
-  "description": "Press tab to quickly access the main search bar or search field of any website. No need to use your mouse! Autofocus available!",
+  "description": "Press Tab to quickly access the main search bar or search field of any website. No need to use your mouse! Autofocus available!",
   "icons": {
     "16": "icons/icons8-google-web-search-16.png",
     "48": "icons/icons8-google-web-search-full-48.png",

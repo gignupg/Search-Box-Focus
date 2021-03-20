@@ -19,6 +19,9 @@ The extension is completely open source which means, no tracking or data collect
 
 Feel free to suggest new features, report bugs and so on right here on Github.
 
+### Installation:
+Install the extension from the [Chrome Web Store](https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm), then make sure to reload/refresh all open tabs for it to work properly. That's it, enjoy the extension ;)
+
 
 ### Credits: 
 Search Box Focus mainly uses the search box detection code of [this Github repository](https://github.com/CodeRevver/Focus-First-Input). 

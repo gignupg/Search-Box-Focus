@@ -3,18 +3,6 @@ let tabOn = true;
 let tabList = null;
 let autofocus = null;
 let thisSite = null;
-let tabId = null;
-
-chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-    isContentScriptRunning(tab[0]);
-});
-
-chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-    thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
-    // Add www. to the url if it's not already there. 
-    if (!/^www/.test(thisSite)) thisSite = "www." + thisSite;
-    tabId = tab[0].id;
-});
 
 // Initializing tooltip
 M.Tooltip.init(document.querySelectorAll('.tooltipped'), { enterDelay: 500 });
@@ -40,19 +28,19 @@ $("#logo").addEventListener("click", () => {
 });
 
 chrome.storage.sync.get(null, (storage) => {
-    if (storage.enabled !== undefined) {
-        extensionOn = storage.enabled;
-    }
-
-    if (storage.tabOn !== undefined) {
-        tabOn = storage.tabOn;
-    }
-
+    extensionOn = storage.power ? storage.power.status : true;
+    tabOn = storage.tabulation ? storage.tabulation.status : true;
     tabList = storage.tabList || {};
     autofocus = storage.autofocus || {};
 
-    updatePopup();
-    updateDisplayedShortcuts();
+    // Updating "thisSite"
+    chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
+        thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");
+        // Add www. to the url if it's not already there. 
+        if (!/^www/.test(thisSite)) thisSite = "www." + thisSite;
+
+        updatePopup();
+    });
 });
 
 function updatePopup() {
@@ -102,6 +90,7 @@ function updatePopup() {
             $("#tab-power-button").style.color = "gray";
         }
 
+        updateDisplayedShortcuts();
 
     } else {
         // Changing the hover color of the power button
@@ -155,18 +144,12 @@ function updateAutofocusList() {
 
     // Update chrome storage
     chrome.storage.sync.set({ autofocus: autofocus });
-    // Message background script that autofocus has changed
-    chrome.runtime.sendMessage("updateState");
 }
 
 function toggleExtensionOnOff() {
     extensionOn = !extensionOn;
     updatePopup();
-    chrome.storage.sync.set({ enabled: extensionOn });
-    // Update background state
-    chrome.runtime.sendMessage("updateState");
-    // Update content state
-    chrome.tabs.sendMessage(tabId, { action: "extension", state: extensionOn });
+    chrome.storage.sync.set({ power: { status: extensionOn } });
 }
 
 function tabPermanentlyOnOff() {
@@ -176,7 +159,6 @@ function tabPermanentlyOnOff() {
         $("#tab-text").style.color = "gray";
         $("#tab-section").classList.add("gray-bg");
         $("#tab-power-button").style.color = "gray";
-        chrome.storage.sync.set({ tabOn: tabOn });
 
     } else {
         tabOn = true;
@@ -184,16 +166,15 @@ function tabPermanentlyOnOff() {
         $("#tab-text").style.color = "black";
         $("#tab-section").classList.remove("gray-bg");
         $("#tab-power-button").style.color = "rgb(70, 70, 70)";
-        chrome.storage.sync.set({ tabOn: tabOn });
     }
 
     updateDisplayedShortcuts();
-    chrome.tabs.sendMessage(tabId, { action: "tabOn", state: tabOn });
+    chrome.storage.sync.set({ tabulation: { status: tabOn } });
 }
 
 function toggleTabOnOff() {
     if (tabList[thisSite]) {
-        tabList[thisSite] = false;
+        delete tabList[thisSite];
         $("#tab-tooltip").dataset.tooltip = `Tab enabled for "${thisSite}"`;
 
     } else {
@@ -203,10 +184,6 @@ function toggleTabOnOff() {
 
     updateDisplayedShortcuts();
     chrome.storage.sync.set({ tabList: tabList });
-    // Update background state
-    chrome.runtime.sendMessage("updateState");
-    // Update content state
-    chrome.tabs.sendMessage(tabId, { action: "tabList", list: tabList });
 }
 
 function $(selector, multiple = false) {
@@ -215,28 +192,4 @@ function $(selector, multiple = false) {
     }
 
     return document.querySelector(selector);
-}
-
-function isContentScriptRunning(tab) {
-    let contentOn = null;
-
-    // send message to backgroundscript to see if it is enabled
-    chrome.tabs.sendMessage(tab.id, { action: "contentRunning" }, (response) => {
-        contentOn = response;
-    });
-
-    // After 1 second, if there is no response show the reload dialog
-    setTimeout(() => {
-        if (tab.url === "chrome://extensions/" || tab.url === "chrome://newtab/") {
-            alert("Search Box Focus has no access to this site, sorry!");
-
-        } else if (!contentOn) {
-            // Tell the user to reload the page!
-            const confirmation = confirm('To use Search Box Focus please reload the page! Reload now?');
-            if (confirmation) {
-                chrome.tabs.reload(tab.id);
-                window.close();
-            }
-        }
-    }, 2000);
 }

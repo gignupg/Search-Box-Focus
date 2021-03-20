@@ -1,21 +1,8 @@
-let extensionOn = true;
-let tabOn = true;
-let tabList = null;
-let thisSite = null;
-
-// Read chrome storage, update variables and focus search box if necessary
+// Autofocus when loading a website
 chrome.storage.sync.get(null, (storage) => {
-  if (storage.enabled !== undefined) {
-    extensionOn = storage.enabled;
-  }
+  const extensionOn = storage.power ? storage.power.status : true;
 
-  if (storage.tabOn !== undefined) {
-    tabOn = storage.tabOn;
-  }
-
-  tabList = storage.tabList || {};
-
-  // Autofocus required
+  // Autofocus on?
   chrome.runtime.sendMessage("getUrl", function (response) {
     const autofocus = storage.autofocus || {};
     thisSite = response.url;
@@ -29,39 +16,31 @@ chrome.storage.sync.get(null, (storage) => {
 
 // Listen for Tab Press
 document.addEventListener("keydown", (e) => {
-  if (extensionOn && tabOn && !tabList[thisSite]) {
-    const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
+  chrome.storage.sync.get(null, (storage) => {
+    const extensionOn = storage.power ? storage.power.status : true;
+    const tabOn = storage.tabulation ? storage.tabulation.status : true;
+    const tabList = storage.tabList || {};
 
-    // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
-    if (searchBoxNotFocused && e.key === "Tab") {
-      // Send message to backgroundscript to see if it is running
-      chrome.runtime.sendMessage("backgroundRunning", () => {
-        // If the response function gets executed, focus the Search Box!
-        focusSearchBox();
-        e.preventDefault();
-      });
-    }
-  }
+    // Autofocus required
+    chrome.runtime.sendMessage("getUrl", function (response) {
+      thisSite = response.url;
+
+      if (extensionOn && tabOn && !tabList[thisSite]) {
+        const searchBoxNotFocused = document.activeElement.tagName !== "INPUT";
+
+        // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
+        if (searchBoxNotFocused && e.key === "Tab") {
+          focusSearchBox();
+          e.preventDefault();
+        }
+      }
+    });
+  });
 });
 
 // Listen for messages
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  switch (msg.action) {
-    case "focus":
-      focusSearchBox();
-      break;
-    case "extension":
-      extensionOn = msg.state;
-      break;
-    case "tabOn":
-      tabOn = msg.state;
-      break;
-    case "tabList":
-      tabList = msg.list;
-      break;
-    case "contentRunning":
-      sendResponse(true);
-  }
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg === "focus") focusSearchBox();
 });
 
 function getStyle(element, name) {

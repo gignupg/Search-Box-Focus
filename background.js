@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(
 
 // Shortcut (Alt + S by default)
 chrome.commands.onCommand.addListener((command) => {
-  chrome.storage.sync.get(null, (storage) => {
+  chrome.storage.local.get((storage) => {
     const extensionOn = storage.power ? storage.power.status : true;
 
     if (extensionOn && command === 'focus-search-bar') {
@@ -29,7 +29,7 @@ chrome.commands.onCommand.addListener((command) => {
 // On Tab Change
 chrome.tabs.onActivated.addListener(() => {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tab) {
-    chrome.storage.sync.get(null, (storage) => {
+    chrome.storage.local.get((storage) => {
       const extensionOn = storage.power ? storage.power.status : true;
       const autofocus = storage.autofocus || {};
       let thisSite = tab[0].url.replace(/^.*\/\//, "").replace(/\/.*/, "");

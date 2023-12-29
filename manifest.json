@@ -1,7 +1,7 @@
 {
   "name": "Search Box Focus",
   "version": "0.3.5",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "description": "Press Tab to quickly access the main search bar or search field of any website. No need to use your mouse! Autofocus available!",
   "icons": {
     "16": "icons/icons8-google-web-search-16.png",
@@ -15,7 +15,7 @@
       "js": ["content.js"]
     }
   ],
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "icons/icons8-google-web-search-16.png",
       "48": "icons/icons8-google-web-search-48.png",
@@ -24,8 +24,7 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "service_worker": "background.js"
   },
   "commands": {
     "focus-search-bar": {
@@ -35,6 +34,14 @@
       "description": "Search Box Focus"
     }
   },
-  "content_security_policy": "script-src 'self'; object-src 'self'",
-  "web_accessible_resources": ["icons/*.png"]
+  "content_security_policy": {
+    "script-src": "self",
+    "object-src": "self"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["/images/icon.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 // Autofocus when loading a website
-chrome.storage.sync.get(null, (storage) => {
+chrome.storage.local.get((storage) => {
   const extensionOn = storage.power ? storage.power.status : true;
 
   // Autofocus on?
@@ -16,7 +16,7 @@ chrome.storage.sync.get(null, (storage) => {
 
 // Listen for Tab Press
 document.addEventListener("keydown", (e) => {
-  chrome.storage.sync.get(null, (storage) => {
+  chrome.storage.local.get((storage) => {
     const extensionOn = storage.power ? storage.power.status : true;
     const tabOn = storage.tabulation ? storage.tabulation.status : true;
     const tabList = storage.tabList || {};

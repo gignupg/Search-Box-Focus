@@ -27,7 +27,7 @@ $("#logo").addEventListener("click", () => {
     chrome.tabs.create({ active: true, url: "https://chrome.google.com/webstore/detail/search-box-focus-hit-tab/amgmdnojamodmpfjaokfgpijhpcednjm" });
 });
 
-chrome.storage.sync.get(null, (storage) => {
+chrome.storage.local.get((storage) => {
     extensionOn = storage.power ? storage.power.status : true;
     tabOn = storage.tabulation ? storage.tabulation.status : true;
     tabList = storage.tabList || {};
@@ -45,7 +45,7 @@ chrome.storage.sync.get(null, (storage) => {
 
 function updatePopup() {
     const suffix = `${extensionOn ? "" : "_disabled"}.png`;
-    chrome.browserAction.setIcon({
+    chrome.action.setIcon({
         path: {
             "16": "icons/icons8-google-web-search-16" + suffix,
             "48": "icons/icons8-google-web-search-48" + suffix,
@@ -143,13 +143,13 @@ function updateAutofocusList() {
     }
 
     // Update chrome storage
-    chrome.storage.sync.set({ autofocus: autofocus });
+    chrome.storage.local.set({ autofocus: autofocus });
 }
 
 function toggleExtensionOnOff() {
     extensionOn = !extensionOn;
     updatePopup();
-    chrome.storage.sync.set({ power: { status: extensionOn } });
+    chrome.storage.local.set({ power: { status: extensionOn } });
 }
 
 function tabPermanentlyOnOff() {
@@ -169,7 +169,7 @@ function tabPermanentlyOnOff() {
     }
 
     updateDisplayedShortcuts();
-    chrome.storage.sync.set({ tabulation: { status: tabOn } });
+    chrome.storage.local.set({ tabulation: { status: tabOn } });
 }
 
 function toggleTabOnOff() {
@@ -183,7 +183,7 @@ function toggleTabOnOff() {
     }
 
     updateDisplayedShortcuts();
-    chrome.storage.sync.set({ tabList: tabList });
+    chrome.storage.local.set({ tabList: tabList });
 }
 
 function $(selector, multiple = false) {

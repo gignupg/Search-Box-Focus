@@ -30,6 +30,7 @@ document.addEventListener("keydown", (e) => {
 
         // If the searchbar is already focused don't focus it again, instead let people tab through the list of suggestions
         if (searchBoxNotFocused && e.key === "Tab") {
+          console.log('Tab pressed, focusing search box');
           focusSearchBox();
           e.preventDefault();
         }
@@ -48,10 +49,16 @@ function getStyle(element, name) {
 };
 
 function checkUrlForSearchBox() {
+  console.log('checkUrlForSearchBox called');
   chrome.runtime.sendMessage("getUrl", function (response) {
+    console.log('response.url:', response.url);
     switch (response.url) {
       case "www.dictionary.cambridge.org":
         return applyFocus(document.getElementById("searchword"));
+      case "www.libristo.eu":
+        return applyFocus(document.getElementById("whisperer-search-mobile"));
+      case "www.reddit.com":
+        return applyFocus(document.querySelector("input[enterkeyhint='search']"));
       default:
         return null;
     }
@@ -73,21 +80,21 @@ function checkHtmlForSearchBox() {
       const isDisabledOrReadonly = input.disabled || input.readOnly;
 
       if (!isHidden && !isDisabledOrReadonly && isValidFocusableField) {
+        console.log('Found valid input:', input);
         return applyFocus(input);
       }
     }
 
     if (inputs.length > 0) {
-      for (let i = 0; i < inputs.length; i++) {
-        return applyFocus(inputs[i]);
-      }
+      console.log('No valid input found, focusing the first input:', inputs[0]);
+      return applyFocus(inputs[0]);
     }
   }
 }
 
 function focusSearchBox() {
-  const urlFound = checkUrlForSearchBox();
-  if (!urlFound) checkHtmlForSearchBox();
+  checkHtmlForSearchBox();
+  checkUrlForSearchBox();
 }
 
 function applyFocus(searchBox) {

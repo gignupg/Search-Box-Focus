@@ -56,9 +56,9 @@ function checkUrlForSearchBox() {
       case "www.dictionary.cambridge.org":
         return applyFocus(document.getElementById("searchword"));
       case "www.libristo.eu":
-        return applyFocus(document.getElementById("whisperer-search-mobile"));
+        return applyFocus(document.querySelector("#whisperer-search"));
       case "www.reddit.com":
-        return applyFocus(document.querySelector("input[enterkeyhint='search']"));
+        return applyFocus(document.querySelector('reddit-search-large').shadowRoot.querySelector("#search-input").shadowRoot.querySelector("label > div > span.input-container > input[type=text]"));
       default:
         return null;
     }
